@@ -115,12 +115,12 @@
         //for each day til christmas; it adds another ornament to the christmas tree
         function regenDecor() {
             decorations.innerHTML = "";
-            for (let i = 0; i < Math.max(25 - day, 0); i++){
+            for (let i = 0; i < 20; i++){
                 const randomImg= ornamentImg[Math.floor(Math.random()*18)]
                 decorations.innerHTML += `<img src="img/ornaments/${randomImg}" class="ornament" id="ornament${i}">`;
                 const ornament = document.getElementById("ornament"+i);
                 //sets the margins to a random value between (4,3) and (14,5)
-                ornament.style.marginTop = (Math.random() * 50) + "%";
+                ornament.style.marginTop = (Math.random() * 20) + "%";
             }
         }
         regenDecor();
