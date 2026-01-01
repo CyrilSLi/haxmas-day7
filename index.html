@@ -32,7 +32,7 @@
             font-size: 4rem;
             margin: 1rem 0;
         }
-        p {
+        p, a {
             font-size: 2rem;
             margin: 0.5rem 0;
         }
@@ -50,13 +50,17 @@
             z-index: 1;
             transition: 0.5s;
         }
+        .emphasis {
+            color: cyan;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 </body>
     <h1>Haxmas Day 7</h1>
-    <p>Winnipeg Transit Tree</p>
-    <p id="loading" style="color: cyan;">Loading...</p>
+    <p><a class="emphasis" target="_blank" href="https://cptdb.ca/wiki/index.php/Winnipeg_Transit">Winnipeg Transit</a> Tree</p>
+    <p id="loading" class="emphasis">Loading...</p>
     <script type="module">
         const wikiPage = await fetch("https://cptdb.ca/wiki/api.php?action=parse&page=Winnipeg_Transit&prop=text&format=json");
         const wikiHtml = new DOMParser().parseFromString((await wikiPage.json()).parse.text['*'], "text/html");
