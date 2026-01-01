@@ -70,9 +70,9 @@
                 return;
             }
             const imgLink = document.createElement("a");
-            imgLink.href = "https://cptdb.ca" + tr.querySelector("td a").href.split("//")[1];
+            imgLink.href = "https://cptdb.ca/wiki/" + tr.querySelector("td a").href.split("/wiki/")[1];
             imgLink.target = "_blank";
-            imgLink.innerHTML = `<img src="https://cptdb.ca${tr.querySelector("td img")?.src.split("//")[1]}" style="top: calc(11rem + ((100dvh - 11rem) / 9 * ${row + 1})); left: calc(50dvw + ${col * 3}dvh);">`; 
+            imgLink.innerHTML = `<img src="https://cptdb.ca/wiki/${tr.querySelector("td img")?.src.split("/wiki/")[1]}" style="top: calc(11rem + ((100dvh - 11rem) / 9 * ${row + 1})); left: calc(50dvw + ${col * 3}dvh);">`; 
             document.body.appendChild(imgLink);
             if (col == row) {
                 row++;
