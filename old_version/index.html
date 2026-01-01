@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Long+Cang&display=swap" rel="stylesheet">
+    <title>Haxmas Day 7</title>
+    <style>
+        * {
+            touch-action: manipulation;
+            margin: 0px;
+            padding: 0px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            font-weight: normal;
+            border: none;
+            font-family: "Long Cang", cursive;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        body {
+            background-image: url("img/backgroundtile.png");
+            overflow: hidden;
+            cursor: ns-resize
+        }
+
+        h1, p {
+            color: white;
+            text-align: center;
+            margin: 1rem;
+        }
+
+        h1 {
+            font-size: 5rem;
+        }
+        p {
+            font-size: 3rem;
+        }
+
+        #decor-container {
+            width: 360%;
+            height: 640%;
+            position: absolute;
+            left: -130%;
+        }
+
+        #star {
+            position: relative;
+            font-size: 10rem;
+            z-index: 1;
+            margin: 0 auto;
+            user-select: none;
+            -ms-user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #tree {
+            width: 360%;
+            height: 640%;
+            position: absolute;
+            left: -130%;
+            z-index: -1;
+        }
+
+        #decorations{
+            height: 100%;
+            margin: 0 auto;
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ornament{
+            height: 10rem;
+        }
+    </style>
+</head>
+<body>
+    <img src="img/tree.png" id="tree" style="top: 0px; filter: hue-rotate(0deg);">
+    <h1>嘿客圣诞 - 七<span id="hue"></span></h1>
+    <p id="loading" style="display: none;">加载中...</p>
+    <p id="date">December 19, 2025</h2>
+    <div id="decor-container" style="top: 0px;">
+        <p id="star">⭐</p>
+        <div id="decorations"></div>
+    </div>
+    <script>
+        //getting date
+        const date = new Date();
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+
+        //list of all the images in img/ornaments and a list of emojis the top decoration thing can be
+        const ornamentImg = ["1.webp","2.gif","3.png","4.png","5.png","6.png","7.webp","8.png","9.png","10.png","11.png","12.png","13.png","14.jpg", "15.gif","16.png", "17.png", "18.png"];
+        const stars = ["⭐", "💫", "💖", "🎄", "🏴‍☠️", "👾"];
+
+        document.getElementById("star").addEventListener('click', () => {
+            let randomIndex = Math.floor(Math.random() * 6 );
+            document.getElementById("star").innerText = stars[randomIndex];
+        });
+
+        //sets the elements with the IDs to variables for easy access!
+        const decorations = document.getElementById("decorations");
+        const dateText = document.getElementById("date"); 
+
+        //sets the text inside dateText to DD/MM/YY (the superior format)
+        dateText.innerText = year + "年" + month + "月" + day + "日";
+
+        //for each day til christmas; it adds another ornament to the christmas tree
+        function regenDecor() {
+            decorations.innerHTML = "";
+            for (let i = 0; i < 20; i++){
+                const randomImg= ornamentImg[Math.floor(Math.random()*18)]
+                decorations.innerHTML += `<img src="img/ornaments/${randomImg}" class="ornament" id="ornament${i}">`;
+                const ornament = document.getElementById("ornament"+i);
+                //sets the margins to a random value between (4,3) and (14,5)
+                ornament.style.marginTop = (Math.random() * 20) + "%";
+            }
+        }
+        regenDecor();
+
+        let treeAccel = 0;
+        let treeHue = 0;
+        let treeScrolling = false;
+        function scrollTree() {
+            if (treeScrolling) {
+                return;
+            }
+            const treeEl = document.getElementById("tree");
+            const decorEl = document.getElementById("decor-container");
+            function setTop(top) {
+                treeEl.style.top = top.toString() + "px";
+                decorEl.style.top = top.toString() + "px";
+            }
+            function switchHue(hue) {
+                document.getElementById("loading").style.display = "block";
+                setTimeout(() => {
+                    treeScrolling = false;
+                    setTop(0);
+                    treeHue = hue;
+                    treeEl.style.filter = `hue-rotate(${treeHue}deg)`;
+                    regenDecor();
+                    document.getElementById("hue").textContent = ["", "（一）", "（二）", "（三）", "（四）", "（五）", "（六）", "（七）"][treeHue / 45];
+                    document.getElementById("loading").style.display = "none";
+                }, 1000);
+            }
+            
+            treeScrolling = setInterval(() => {
+                setTop(parseFloat(treeEl.style.top) - treeAccel);
+                const treeTop = parseFloat(treeEl.style.top);
+                if (treeTop - window.innerHeight > 0.1) {
+                    treeAccel = 0;
+                    setTop(window.innerHeight);
+                    switchHue(((treeHue - 45) % 360 + 360) % 360);
+                } else if (treeTop + treeEl.scrollHeight < 0.1) {
+                    treeAccel = 0;
+                    setTop(-treeEl.scrollHeight);
+                    switchHue(((treeHue + 45) % 360 + 360) % 360);
+                } else if (Math.abs(treeAccel) < 0.1) {
+                    treeAccel = 0;
+                    treeScrolling = false;
+                } else {
+                    treeAccel *= 0.95;
+                    return;
+                }
+                clearInterval(treeScrolling);
+            }, 16);
+        }
+        window.addEventListener("wheel", (ev) => {
+            if (ev.ctrlKey) {
+                return;
+            }
+            treeAccel = ev.deltaY * 0.5;
+            scrollTree();
+        });
+        window.addEventListener("keydown", (ev) => {
+            if (ev.key === "ArrowUp") {
+                treeAccel = -10;
+                scrollTree();
+            } else if (ev.key === "ArrowDown") {
+                treeAccel = 10;
+                scrollTree();
+            }
+        });
+    </script>
+</body>
+</html>

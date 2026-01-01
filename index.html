@@ -2,11 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Long+Cang&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Haxmas Day 7</title>
+    <script src="https://cdn.jsdelivr.net/npm/epoxy-tls-polyfill@1/dist/javascript.min.js"></script>
     <style>
         * {
             touch-action: manipulation;
@@ -15,179 +13,74 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            font-weight: normal;
+            font-weight: bold;
             border: none;
-            font-family: "Long Cang", cursive;
-            font-weight: 400;
-            font-style: normal;
+            font-family: sans-serif;
         }
-
         body {
-            background-image: url("img/backgroundtile.png");
-            overflow: hidden;
-            cursor: ns-resize
+            background-image: url("img/tree.png");
+            background-size: auto calc(100dvh - 10rem);
+            background-repeat: no-repeat;
+            background-position: center 11rem;
+            background-color: black;
         }
-
         h1, p {
             color: white;
             text-align: center;
-            margin: 1rem;
         }
-
         h1 {
-            font-size: 5rem;
+            font-size: 4rem;
+            margin: 1rem 0;
         }
         p {
-            font-size: 3rem;
+            font-size: 2rem;
+            margin: 0.5rem 0;
         }
-
-        #decor-container {
-            width: 360%;
-            height: 640%;
-            position: absolute;
-            left: -130%;
+        img {
+            position: fixed;
+            height: 5dvh;
+            width: 5dvh;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            border-radius: 1rem;
+            cursor: pointer;
         }
-
-        #star {
-            position: relative;
-            font-size: 10rem;
+        img:hover {
+            transform: translate(-50%, -50%) scale(3);
             z-index: 1;
-            margin: 0 auto;
-            user-select: none;
-            -ms-user-select: none;
-            -moz-user-select: none;
-            -webkit-user-select: none;
-        }
-
-        #tree {
-            width: 360%;
-            height: 640%;
-            position: absolute;
-            left: -130%;
-            z-index: -1;
-        }
-
-        #decorations{
-            height: 100%;
-            margin: 0 auto;
-            align-items: center;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .ornament{
-            height: 10rem;
+            transition: 0.5s;
         }
     </style>
 </head>
 <body>
-    <img src="img/tree.png" id="tree" style="top: 0px; filter: hue-rotate(0deg);">
-    <h1>嘿客圣诞 - 七<span id="hue"></span></h1>
-    <p id="loading" style="display: none;">加载中...</p>
-    <p id="date">December 19, 2025</h2>
-    <div id="decor-container" style="top: 0px;">
-        <p id="star">⭐</p>
-        <div id="decorations"></div>
-    </div>
-    <script>
-        //getting date
-        const date = new Date();
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-
-        //list of all the images in img/ornaments and a list of emojis the top decoration thing can be
-        const ornamentImg = ["1.webp","2.gif","3.png","4.png","5.png","6.png","7.webp","8.png","9.png","10.png","11.png","12.png","13.png","14.jpg", "15.gif","16.png", "17.png", "18.png"];
-        const stars = ["⭐", "💫", "💖", "🎄", "🏴‍☠️", "👾"];
-
-        document.getElementById("star").addEventListener('click', () => {
-            let randomIndex = Math.floor(Math.random() * 6 );
-            document.getElementById("star").innerText = stars[randomIndex];
-        });
-
-        //sets the elements with the IDs to variables for easy access!
-        const decorations = document.getElementById("decorations");
-        const dateText = document.getElementById("date"); 
-
-        //sets the text inside dateText to DD/MM/YY (the superior format)
-        dateText.innerText = year + "年" + month + "月" + day + "日";
-
-        //for each day til christmas; it adds another ornament to the christmas tree
-        function regenDecor() {
-            decorations.innerHTML = "";
-            for (let i = 0; i < 20; i++){
-                const randomImg= ornamentImg[Math.floor(Math.random()*18)]
-                decorations.innerHTML += `<img src="img/ornaments/${randomImg}" class="ornament" id="ornament${i}">`;
-                const ornament = document.getElementById("ornament"+i);
-                //sets the margins to a random value between (4,3) and (14,5)
-                ornament.style.marginTop = (Math.random() * 20) + "%";
-            }
-        }
-        regenDecor();
-
-        let treeAccel = 0;
-        let treeHue = 0;
-        let treeScrolling = false;
-        function scrollTree() {
-            if (treeScrolling) {
-                return;
-            }
-            const treeEl = document.getElementById("tree");
-            const decorEl = document.getElementById("decor-container");
-            function setTop(top) {
-                treeEl.style.top = top.toString() + "px";
-                decorEl.style.top = top.toString() + "px";
-            }
-            function switchHue(hue) {
-                document.getElementById("loading").style.display = "block";
-                setTimeout(() => {
-                    treeScrolling = false;
-                    setTop(0);
-                    treeHue = hue;
-                    treeEl.style.filter = `hue-rotate(${treeHue}deg)`;
-                    regenDecor();
-                    document.getElementById("hue").textContent = ["", "（一）", "（二）", "（三）", "（四）", "（五）", "（六）", "（七）"][treeHue / 45];
-                    document.getElementById("loading").style.display = "none";
-                }, 1000);
-            }
-            
-            treeScrolling = setInterval(() => {
-                setTop(parseFloat(treeEl.style.top) - treeAccel);
-                const treeTop = parseFloat(treeEl.style.top);
-                if (treeTop - window.innerHeight > 0.1) {
-                    treeAccel = 0;
-                    setTop(window.innerHeight);
-                    switchHue(((treeHue - 45) % 360 + 360) % 360);
-                } else if (treeTop + treeEl.scrollHeight < 0.1) {
-                    treeAccel = 0;
-                    setTop(-treeEl.scrollHeight);
-                    switchHue(((treeHue + 45) % 360 + 360) % 360);
-                } else if (Math.abs(treeAccel) < 0.1) {
-                    treeAccel = 0;
-                    treeScrolling = false;
-                } else {
-                    treeAccel *= 0.95;
-                    return;
-                }
-                clearInterval(treeScrolling);
-            }, 16);
-        }
-        window.addEventListener("wheel", (ev) => {
-            if (ev.ctrlKey) {
-                return;
-            }
-            treeAccel = ev.deltaY * 0.5;
-            scrollTree();
-        });
-        window.addEventListener("keydown", (ev) => {
-            if (ev.key === "ArrowUp") {
-                treeAccel = -10;
-                scrollTree();
-            } else if (ev.key === "ArrowDown") {
-                treeAccel = 10;
-                scrollTree();
-            }
-        });
-    </script>
 </body>
+    <h1>Haxmas Day 7</h1>
+    <p>Winnipeg Transit Tree</p>
+    <p id="loading" style="color: cyan;">Loading...</p>
+    <script type="module">
+        const wikiPage = await fetch("https://cptdb.ca/wiki/api.php?action=parse&page=Winnipeg_Transit&prop=text&format=json");
+        const wikiHtml = new DOMParser().parseFromString((await wikiPage.json()).parse.text['*'], "text/html");
+        let fleetTable = [...wikiHtml.getElementsByTagName('th')].filter((el) => el.textContent.trim().toLowerCase() === "fleet number")[0];
+        while (fleetTable.tagName !== "TABLE") {
+            fleetTable = fleetTable.parentElement;
+        }
+        let row = 0, col = 0;
+        [...fleetTable.getElementsByTagName('tr')].forEach((tr, i) => {
+            if (i === 0) {
+                return;
+            }
+            const imgLink = document.createElement("a");
+            imgLink.href = "https://cptdb.ca" + tr.querySelector("td a").href.split("//")[1];
+            imgLink.target = "_blank";
+            imgLink.innerHTML = `<img src="https://cptdb.ca${tr.querySelector("td img")?.src.split("//")[1]}" style="top: calc(11rem + ((100dvh - 11rem) / 9 * ${row + 1})); left: calc(50dvw + ${col * 3}dvh);">`; 
+            document.body.appendChild(imgLink);
+            if (col == row) {
+                row++;
+                col = -row;
+            } else {
+                col += 2;
+            }
+        });
+        document.getElementById('loading').remove();
+    </script>
 </html>
